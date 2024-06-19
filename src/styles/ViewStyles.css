@@ -1,0 +1,56 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  ul li {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  ul li p {
+    margin: 5px 0;
+    color: #333;
+  }
+  
+  ul li p strong {
+    color: #007bff;
+  }
+  
+  ul li a,
+  ul li button {
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  ul li a:hover,
+  ul li button:hover {
+    background-color: #0056b3;
+  }
+  
+  ul li button {
+    border: none;
+    cursor: pointer;
+  }
+  
+  ul li .actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  ul li .actions a,
+  ul li .actions button {
+    flex: 1;
+    margin: 0 5px;
+  }
