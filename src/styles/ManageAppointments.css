@@ -1,0 +1,58 @@
+/* Contenedor principal */
+.manage-appointments {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado */
+.manage-appointments h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Lista de citas */
+.manage-appointments ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.manage-appointments li {
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Título de la cita */
+.manage-appointments li h3 {
+  margin: 0;
+  color: #333;
+}
+
+/* Detalles de la cita */
+.manage-appointments li p {
+  margin: 5px 0;
+  color: #666;
+}
+
+/* Botón de eliminar */
+.manage-appointments button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.manage-appointments button:hover {
+  background-color: #e53935;
+}

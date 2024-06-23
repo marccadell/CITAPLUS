@@ -1,18 +1,52 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import ProtectedRoute from '../components/ProtectedRoute';
-import CreateAppointment from '../components/CreateAppointment';
-import ViewAppointments from '../components/ViewAppointments';
-import EditAppointment from '../components/EditAppointment';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase-config';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
   return (
     <nav className="navbar">
-      <Link to="/register">Register</Link>
-      <Link to="/login">Login</Link>
-      <Link to="/create-appointment" element={<ProtectedRoute><CreateAppointment /></ProtectedRoute>}>Crear Cita</Link>
-    
+      {currentUser ? (
+        <>
+          {currentUser.role === 'doctor' ? (
+            <>
+              <li>
+                <Link to="/create-appointment">Crear Cita</Link>
+              </li>
+              <li>
+                <Link to="/manage-appointments">Gestionar Citas</Link>
+              </li>
+            </>
+          ) : (
+            <li>
+              <Link to="/view-appointments">Mis Citas</Link>
+            </li>
+          )}
+          <li>
+            <button onClick={handleLogout} className="logout-button">Cerrar Sesión</button>
+          </li>
+        </>
+      ) : (
+        <>
+          <Link to="/register">Register</Link>
+          <Link to="/login">Login</Link>
+        </>
+      )}
     </nav>
   );
 };
