@@ -16,8 +16,33 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        setCurrentUser({ ...user, role: userDoc.data().role });
+        try {
+          let collectionName = '';
+          let userData = null;
+
+          // Determina el tipo de usuario consultando primero en 'patients'
+          const patientDoc = await getDoc(doc(db, 'patients', user.uid));
+          if (patientDoc.exists()) {
+            collectionName = 'patients';
+            userData = patientDoc.data();
+          } else {
+            // Si no es paciente, entonces es doctor (se asume que cada usuario está en una sola colección)
+            const doctorDoc = await getDoc(doc(db, 'doctors', user.uid));
+            if (doctorDoc.exists()) {
+              collectionName = 'doctors';
+              userData = doctorDoc.data();
+            }
+          }
+
+          if (userData) {
+            setCurrentUser({ ...user, role: collectionName === 'patients' ? 'patient' : 'doctor', userData });
+          } else {
+            setCurrentUser(null);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setCurrentUser(null);
+        }
       } else {
         setCurrentUser(null);
       }
@@ -60,72 +85,8 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+export default AuthProvider;
 
-{/*
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase-config';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
-// Creamos el contexto de autenticación
-const AuthContext = createContext();
 
-// Hook personalizado para usar el contexto de autenticación
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
 
-// Proveedor de autenticación que envuelve toda la aplicación
-export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Efecto para mantener el estado del usuario actualizado
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
-
-    // Limpieza del efecto
-    return () => unsubscribe();
-  }, []);
-
-  // Función para iniciar sesión
-  const login = async (email, password) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // Función para cerrar sesión
-  const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // Valor proporcionado por el contexto
-  const value = {
-    currentUser,
-    login,
-    logout,
-  };
-
-  // Mientras carga, mostrar un mensaje de carga
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
-
-  // Devolvemos el proveedor del contexto con los valores proporcionados
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-*/}

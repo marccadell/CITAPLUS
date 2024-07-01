@@ -1,6 +1,7 @@
+/* Register.css */
 
 .form-container {
-  max-width: 400px;
+  max-width: 800px; /* Ampliar el ancho máximo para dos columnas */
   margin: auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -41,17 +42,32 @@
   background-color: #0056b3;
 }
 
+.radio-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+
+.form-container .label-container {
+  display: block;
+  margin: 2px auto 1px auto;
+  color: black;
+}
+
 .form-container label.option-role {
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   font-size: 16px;
   margin-bottom: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 10px 15px; 
+  padding: 10px 15px;
   background-color: #fff;
   transition: background-color 0.3s ease;
-  cursor: pointer; 
+  cursor: pointer;
+  width: 48%;
   color: black;
 }
 
@@ -60,9 +76,56 @@
 }
 
 .form-container label.option-role input {
-  display: none; 
+  display: none;
 }
 
-.form-container div {
+.form-container .form-group {
+  margin: auto;
+  color: black;
+}
+
+.form-container .form-group label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: block;
+  color: black;
+}
+
+.form-container .form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: black;
+}
+
+.form-container .form-group .react-select-container {
+  width: 100%;
+  
+}
+
+.form-container .form-group .react-select__control {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  
+}
+
+.form-container .form-group .react-select__control--is-focused {
+  border-color: #007bff;
+  box-shadow: 0 0 0 1px #007bff;
+}
+
+.form-container .form-group .react-select__single-value {
+  font-size: 16px;
+}
+
+.form-container .form-group .react-select__menu {
+  font-size: 16px;
+}
+
+.form-container .patient-form {
   margin-bottom: 15px;
+  color: black;
 }
