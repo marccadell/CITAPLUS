@@ -1,7 +1,5 @@
-/* Register.css */
-
 .form-container {
-  max-width: 800px; /* Ampliar el ancho máximo para dos columnas */
+  max-width: 800px; 
   margin: auto;
   padding: 20px;
   background-color: #f9f9f9;
