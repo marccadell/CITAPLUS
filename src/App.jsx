@@ -1,14 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+
 import Register from './pages/Register';
 import Login from './pages/Login';
+
 import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
-import CreateAppointment from './components/CreateAppointment';
-import ViewAppointments from './components/ViewAppointments';
-import EditAppointment from './components/EditAppointment';
-import ManageAppointments from './components/ManageAppointments';
+import CreateAppointment from './components/Appointment/CreateAppointment';
+import ViewAppointments from './components/Appointment/ViewAppointments';
+import ManageAppointments from './components/Appointment/ManageAppointments';
+
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import ProtectedRoute from './guards/ProtectedRoute';
+
 
 function App() {
   return (
@@ -33,17 +36,14 @@ const Dashboard = () => {
   const { currentUser } = useAuth();
 
   if (!currentUser) {
-    // Si no hay usuario autenticado, redirige al inicio de sesión
     return <Navigate to="/login" />;
   }
 
-  // Redirigir según el rol del usuario
   if (currentUser.role === 'doctors') {
     return <Navigate to="/login" />;
   } else if (currentUser.role === 'patients') {
     return <Navigate to="/login" />;
   } else {
-    // Manejar otros roles o casos no esperados
     return <Navigate to="/" />;
   }
 };

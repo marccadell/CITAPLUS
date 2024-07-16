@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase-config';
+import { db } from '../../firebase-config';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, getDoc, query, where, getDocs, doc } from 'firebase/firestore';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
 import AsyncSelect from 'react-select/async';
-import '../styles/FormStyles.css';
+import '../../styles/FormStyles.css';
 
 const CreateAppointment = () => {
   const { currentUser } = useAuth();
   const [doctorName, setDoctorName] = useState('');
   const [doctorMedicalCenter, setDoctorMedicalCenter] = useState('');
+  const [patientPhotoUrl, setPatientPhotoUrl] = useState('');
   const [appointmentData, setAppointmentData] = useState({
-    patientName: '',
+    patientName: null, 
     appointmentDate: '',
     notes: null,
     observaciones: null,
     diagnostico: '',
     centroMedico: '',
-    servicio: '',
+    servicio: null, 
   });
 
   useEffect(() => {
@@ -49,11 +52,44 @@ const CreateAppointment = () => {
     });
   };
 
-  const handleSelectChange = (selectedOption, action) => {
+  const handleSelectChange = async (selectedOption, action) => {
+    if (action.name === 'patientName') {
+      const patientId = selectedOption.value;
+      const patientDocRef = doc(db, 'patients', patientId);
+      const patientDocSnap = await getDoc(patientDocRef);
+
+      if (patientDocSnap.exists()) {
+        const patientData = patientDocSnap.data();
+        if (patientData && patientData.fotoPerfil) {
+          const photoUrl = await getProfilePhotoUrl(patientData.fotoPerfil);
+          setPatientPhotoUrl(photoUrl);
+        } else {
+          setPatientPhotoUrl('');
+        }
+      } else {
+        setPatientPhotoUrl('');
+      }
+    }
+
     setAppointmentData({
       ...appointmentData,
       [action.name]: selectedOption,
     });
+  };
+
+  const getProfilePhotoUrl = async (photoPath) => {
+    try {
+      const storage = getStorage();
+      const photoRef = ref(storage, photoPath);
+      const photoUrl = await getDownloadURL(photoRef);
+      return photoUrl;
+    } catch (error) {
+      console.error('Error al obtener la URL de la foto de perfil:', error);
+      if (error.code === 'storage/unauthorized') {
+        alert('No tienes permiso para acceder a la foto de perfil.');
+      }
+      return '';
+    }
   };
 
   const loadPatients = async (inputValue) => {
@@ -93,7 +129,6 @@ const CreateAppointment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar que todos los campos necesarios estén llenos
     const {
       patientName,
       appointmentDate,
@@ -109,6 +144,7 @@ const CreateAppointment = () => {
 
     try {
       await addDoc(collection(db, 'appointments'), {
+        patientId: patientName.value,
         patientName: patientName.label,
         doctorName: doctorName,
         appointmentDate: appointmentDate,
@@ -121,16 +157,17 @@ const CreateAppointment = () => {
       });
 
       setAppointmentData({
-        patientName: '',
+        patientName: null, 
         appointmentDate: '',
         notes: null,
         observaciones: null,
         diagnostico: '',
         centroMedico: doctorMedicalCenter,
-        servicio: '',
+        servicio: null, 
       });
+      setPatientPhotoUrl('');
 
-      alert('Cita creada exitosamente.');
+      toast.success('Cita creada exitosamente.');
     } catch (error) {
       console.error('Error al crear la cita:', error);
       alert('Hubo un error al crear la cita. Por favor, inténtalo de nuevo.');
@@ -148,6 +185,11 @@ const CreateAppointment = () => {
         placeholder="Buscar paciente"
         value={appointmentData.patientName}
       />
+      {patientPhotoUrl && (
+        <div className="patient-photo-container">
+          <img src={patientPhotoUrl} alt="Foto de perfil del paciente" className="patient-photo" />
+        </div>
+      )}
       <input
         type="text"
         name="centroMedico"
@@ -198,11 +240,15 @@ const CreateAppointment = () => {
 export default CreateAppointment;
 
 
+
+
 {/* 
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase-config';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, getDoc, query, where, getDocs, doc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 import AsyncSelect from 'react-select/async';
 import '../styles/FormStyles.css';
 
@@ -210,6 +256,7 @@ const CreateAppointment = () => {
   const { currentUser } = useAuth();
   const [doctorName, setDoctorName] = useState('');
   const [doctorMedicalCenter, setDoctorMedicalCenter] = useState('');
+  const [patientPhotoUrl, setPatientPhotoUrl] = useState('');
   const [appointmentData, setAppointmentData] = useState({
     patientName: '',
     appointmentDate: '',
@@ -250,12 +297,46 @@ const CreateAppointment = () => {
     });
   };
 
-  const handleSelectChange = (selectedOption, action) => {
+  const handleSelectChange = async (selectedOption, action) => {
+    if (action.name === 'patientName') {
+      const patientId = selectedOption.value;
+      const patientDocRef = doc(db, 'patients', patientId);
+      const patientDocSnap = await getDoc(patientDocRef);
+
+      if (patientDocSnap.exists()) {
+        const patientData = patientDocSnap.data();
+        if (patientData && patientData.fotoPerfil) {
+          const photoUrl = await getProfilePhotoUrl(patientData.fotoPerfil);
+          setPatientPhotoUrl(photoUrl);
+        } else {
+          setPatientPhotoUrl('');
+        }
+      } else {
+        setPatientPhotoUrl('');
+      }
+    }
+
     setAppointmentData({
       ...appointmentData,
       [action.name]: selectedOption,
     });
   };
+
+  const getProfilePhotoUrl = async (photoPath) => {
+    try {
+      const storage = getStorage();
+      const photoRef = ref(storage, photoPath);
+      const photoUrl = await getDownloadURL(photoRef);
+      return photoUrl;
+    } catch (error) {
+      console.error('Error al obtener la URL de la foto de perfil:', error);
+      if (error.code === 'storage/unauthorized') {
+        alert('No tienes permiso para acceder a la foto de perfil.');
+      }
+      return '';
+    }
+  };
+  
 
   const loadPatients = async (inputValue) => {
     const patientsRef = collection(db, 'patients');
@@ -310,6 +391,7 @@ const CreateAppointment = () => {
 
     try {
       await addDoc(collection(db, 'appointments'), {
+        patientId: patientName.value,
         patientName: patientName.label,
         doctorName: doctorName,
         appointmentDate: appointmentDate,
@@ -330,8 +412,9 @@ const CreateAppointment = () => {
         centroMedico: doctorMedicalCenter,
         servicio: '',
       });
+      setPatientPhotoUrl('');
 
-      alert('Cita creada exitosamente.');
+      toast.success('Cita creada exitosamente.');
     } catch (error) {
       console.error('Error al crear la cita:', error);
       alert('Hubo un error al crear la cita. Por favor, inténtalo de nuevo.');
@@ -349,6 +432,11 @@ const CreateAppointment = () => {
         placeholder="Buscar paciente"
         value={appointmentData.patientName}
       />
+      {patientPhotoUrl && (
+        <div className="patient-photo-container">
+          <img src={patientPhotoUrl} alt="Foto de perfil del paciente" className="patient-photo" />
+        </div>
+      )}
       <input
         type="text"
         name="centroMedico"

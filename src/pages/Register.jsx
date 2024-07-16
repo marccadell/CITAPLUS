@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase-config';
+import { auth, db, storage } from '../firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc, getDocs, collection } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import Select from 'react-select';
 import '../styles/Register.css'; 
@@ -19,7 +20,6 @@ const Register = () => {
       apellidoMaterno: '',
     },
     genero: '',
-    edad: '',
     nacionalidad: '',
     fechaNacimiento: '',
     dni: '',
@@ -64,6 +64,7 @@ const Register = () => {
     idiomasHablados: '',
     horariosDisponibles: '',
   });
+  const [fotoPerfil, setFotoPerfil] = useState(null);
 
   const [nacionalidades, setNacionalidades] = useState([]); 
   const [loadingNacionalidades, setLoadingNacionalidades] = useState(true); 
@@ -407,6 +408,13 @@ const Register = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      let fotoPerfilURL = '';
+      if (fotoPerfil) {
+        const storageRef = ref(storage, `profilePhotos/${user.uid}/${fotoPerfil.name}`);
+        await uploadBytes(storageRef, fotoPerfil);
+        fotoPerfilURL = await getDownloadURL(storageRef);
+      }
+
       // Determinar la colección según el tipo de usuario
       const collectionName = userType === 'patient' ? 'patients' : 'doctors';
       const userData = {
@@ -418,13 +426,13 @@ const Register = () => {
         selectedProvincia,
         role: userType,
         fecha_modificacion: new Date(),
+        fotoPerfil: fotoPerfilURL,
       };
 
       // Agregar atributos específicos según el tipo de usuario
       if (userType === 'patient') {
         userData.nombreCompleto = patientData.nombreCompleto;
         userData.genero = patientData.genero;
-        userData.edad = patientData.edad;
         userData.fechaNacimiento = patientData.fechaNacimiento;
         userData.nacionalidad = patientData.nacionalidad;
         userData.dni = patientData.dni;
@@ -493,6 +501,15 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div className="form-group">
+            <label>Seleccione su Foto de Perfil:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFotoPerfil(e.target.files[0])}
+              required
+            />
+          </div>
           <div className="radio-container">
             <label className='option-role'>
               <input
@@ -565,13 +582,6 @@ const Register = () => {
               <option value="female">Femenino</option>
               <option value="other">Otro</option>
             </select>
-            <input
-              type="number"
-              placeholder="Edad"
-              value={patientData.edad}
-              onChange={(e) => setPatientData({ ...patientData, edad: e.target.value })}
-              required
-            />
             <div className="form-group">
               <label>Fecha de Nacimiento:</label>
               <input

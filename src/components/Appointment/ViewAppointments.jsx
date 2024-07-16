@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase-config';
-import { useAuth } from '../contexts/AuthContext';
-import '../styles/ViewAppointments.css'; // Asegúrate de crear este archivo para los estilos
+import { db } from '../../firebase-config';
+import { useAuth } from '../../contexts/AuthContext';
+import '../../styles/ViewAppointments.css';
 
 const ViewAppointments = () => {
   const { currentUser } = useAuth();
