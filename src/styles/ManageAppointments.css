@@ -37,6 +37,26 @@
   color: black;
 }
 
+.info-button {
+  background-color: #21c512;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  position: relative;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-button:hover {
+  background-color: #21c5128c;
+}
+
 .appointment-card:hover {
   transform: translateY(-5px);
 }

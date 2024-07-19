@@ -49,8 +49,7 @@
 }
 
 .modal-close-button {
-  background-color: #b3b3b3; /* Rojo */
-  color: #fff;
+  color: #7c7c7c;
   border: none;
   border-radius: 50%;
   width: 30px;
@@ -65,7 +64,7 @@
 }
 
 .modal-close-button:hover {
-  background-color: #686868; /* Rojo más oscuro al pasar el mouse */
+  background-color: #d1d1d1; 
 }
 
 .date-info {
@@ -81,3 +80,4 @@ button[type="submit"] {
   border: none;
   border-radius: 4px;
   cursor: pointer
+}

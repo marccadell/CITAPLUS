@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/ModalConfirmation.css';
 
-const ModalConfirmation = ({ closeModal, title, message, onConfirm }) => {
+const ModalConfirmation = ({ handleCancel, title, message, onConfirm }) => {
   return (
     <div className="modal">
       <div className="modal-content confirmation">
@@ -9,7 +9,7 @@ const ModalConfirmation = ({ closeModal, title, message, onConfirm }) => {
         <p>{message}</p>
         <div className="modal-buttons">
           <button className="confirm-button" onClick={onConfirm}>Guardar Cambios</button>
-          <button className="cancel-button" onClick={closeModal}>Seguir Editando</button>
+          <button className="cancel-button" onClick={handleCancel}>Seguir Editando</button>
         </div>
       </div>
     </div>

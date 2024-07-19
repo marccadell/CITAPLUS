@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import '../../styles/Modal.css';
+import '../../styles/ModalEditAppointment.css';
 
 const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, handleSubmit, serviceOptions }) => {
   const [selectedDate, setSelectedDate] = useState(fields.find(field => field.name === 'appointmentDate').value);

@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 
 import Navbar from './components/Navbar';
+
 import CreateAppointment from './components/Appointment/CreateAppointment';
 import ViewAppointments from './components/Appointment/ViewAppointments';
 import ManageAppointments from './components/Appointment/ManageAppointments';
