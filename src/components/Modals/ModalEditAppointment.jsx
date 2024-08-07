@@ -5,14 +5,15 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/ModalEditAppointment.css';
 
 const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, handleSubmit, serviceOptions }) => {
-  const [selectedDate, setSelectedDate] = useState(fields.find(field => field.name === 'appointmentDate').value);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const renderField = (field) => {
     if (field.name === 'servicio') {
       return (
         <Select
           key={field.name}
-          defaultValue={serviceOptions.find(option => option.label === field.value)}
+          defaultValue={null}
+          placeholder="Seleccione un servicio"
           options={serviceOptions}
           onChange={(selectedOption) => handleFieldChange(field.name, selectedOption.label)}
           className="modal-select"
@@ -100,6 +101,7 @@ const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, ha
 };
 
 export default ModalEditAppointment;
+
 
 
 {/*

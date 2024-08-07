@@ -29,12 +29,31 @@
 
 .appointment-card {
   background-color: #fff;
+  position: relative;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 300px;
   padding: 20px;
   transition: transform 0.3s ease;
   color: black;
+}
+
+.appointment-card.past-appointment {
+  opacity: 0.4;
+  background-color: #d3d3d3;
+  
+}
+
+.unavailable-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: #ff0808;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .info-button {
@@ -112,6 +131,13 @@
 
 .edit-button:hover {
   background-color: #1278bc;
+}
+
+.button-disabled, .button-disabled:hover {
+  background-color: #e0e0e0; 
+  color: #a0a0a0; 
+  cursor: not-allowed; 
+  border: 1px solid #d0d0d0; 
 }
 
 

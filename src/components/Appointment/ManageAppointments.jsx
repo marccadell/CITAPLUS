@@ -16,7 +16,8 @@ import { faTrashAlt, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import '../../styles/ManageAppointments.css';
 
-import { format, parseISO, isSameDay, addHours } from 'date-fns';
+import { format, parseISO, isSameDay, isBefore } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const ManageAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -153,9 +154,14 @@ const ManageAppointments = () => {
 
   const filterAppointmentsByDate = (date) => {
     return appointments.filter(app => {
-      const appointmentDate = addHours(parseISO(app.appointmentDate), 2); // GMT+2 adjustment for Madrid
+      const appointmentDate = parseISO(app.appointmentDate);
       return isSameDay(date, appointmentDate);
     });
+  };
+
+  const isPastAppointment = (date) => {
+    const now = new Date();
+    return isBefore(parseISO(date), now);
   };
 
   return (
@@ -165,25 +171,44 @@ const ManageAppointments = () => {
         <Calendar
           onChange={onDateChange}
           value={selectedDate}
+          locale="es"
         />
       </div>
       <div className="appointments-container">
         {filterAppointmentsByDate(selectedDate).map((appointment) => (
-          <div key={appointment.id} className="appointment-card">
+          <div
+            key={appointment.id}
+            className={`appointment-card ${isPastAppointment(appointment.appointmentDate) ? 'past-appointment' : ''}`}
+          >
+            {isPastAppointment(appointment.appointmentDate) && (
+              <p className="unavailable-text">No disponible</p>
+            )}
             <div className="card-header">
-              <button className="info-button" onClick={() => handleInfo(appointment)}>
+              <button
+                className={`info-button ${isPastAppointment(appointment.appointmentDate) ? 'button-disabled' : ''}`}
+                onClick={() => handleInfo(appointment)}
+                disabled={isPastAppointment(appointment.appointmentDate)}
+              >
                 <FontAwesomeIcon icon={faPlus} />
               </button>
             </div>
             <img src={appointment.patientPhotoUrl} alt="Foto de perfil del paciente" className="patient-photo" />
             <h3>Paciente: {appointment.patientName}</h3>
-            <p>Fecha de la cita: {format(addHours(parseISO(appointment.appointmentDate), 2), 'dd/MM/yyyy HH:mm')}</p>
+            <p>Fecha de la cita: {format(parseISO(appointment.appointmentDate), 'dd/MM/yyyy HH:mm', { locale: es })}</p>
             <p>Servicio: {appointment.servicio || 'No especificado'}</p>
             <div className="appointment-actions">
-              <button className="delete-button" onClick={() => handleDelete(appointment.id)}>
+              <button
+                className={`delete-button ${isPastAppointment(appointment.appointmentDate) ? 'button-disabled' : ''}`}
+                onClick={() => handleDelete(appointment.id)}
+                disabled={isPastAppointment(appointment.appointmentDate)}
+              >
                 <FontAwesomeIcon icon={faTrashAlt} />
               </button>
-              <button className="edit-button" onClick={() => handleEdit(appointment)}>
+              <button
+                className={`edit-button ${isPastAppointment(appointment.appointmentDate) ? 'button-disabled' : ''}`}
+                onClick={() => handleEdit(appointment)}
+                disabled={isPastAppointment(appointment.appointmentDate)}
+              >
                 <FontAwesomeIcon icon={faEdit} /> Editar Cita
               </button>
             </div>
@@ -234,6 +259,9 @@ const ManageAppointments = () => {
 };
 
 export default ManageAppointments;
+
+
+
 
 
 {/*
@@ -257,7 +285,8 @@ import { faTrashAlt, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import '../../styles/ManageAppointments.css';
 
-import { format, parseISO, isSameDay, addHours } from 'date-fns';
+import { format, parseISO, isSameDay } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const ManageAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -394,7 +423,7 @@ const ManageAppointments = () => {
 
   const filterAppointmentsByDate = (date) => {
     return appointments.filter(app => {
-      const appointmentDate = addHours(parseISO(app.appointmentDate), 2); // GMT+2 adjustment for Madrid
+      const appointmentDate = parseISO(app.appointmentDate); 
       return isSameDay(date, appointmentDate);
     });
   };
@@ -406,6 +435,7 @@ const ManageAppointments = () => {
         <Calendar
           onChange={onDateChange}
           value={selectedDate}
+          locale="es"
         />
       </div>
       <div className="appointments-container">
@@ -418,7 +448,7 @@ const ManageAppointments = () => {
             </div>
             <img src={appointment.patientPhotoUrl} alt="Foto de perfil del paciente" className="patient-photo" />
             <h3>Paciente: {appointment.patientName}</h3>
-            <p>Fecha de la cita: {format(addHours(parseISO(appointment.appointmentDate), 2), 'dd/MM/yyyy HH:mm')}</p>
+            <p>Fecha de la cita: {format(parseISO(appointment.appointmentDate), 'dd/MM/yyyy HH:mm', { locale: es })}</p>
             <p>Servicio: {appointment.servicio || 'No especificado'}</p>
             <div className="appointment-actions">
               <button className="delete-button" onClick={() => handleDelete(appointment.id)}>
@@ -437,7 +467,7 @@ const ManageAppointments = () => {
           closeModal={closeModal}
           title="Editar Cita"
           fields={[
-            { name: 'appointmentDate', label: 'Fecha de la cita', value: format(parseISO(selectedAppointment.appointmentDate), 'yyyy-MM-ddTHH:mm') },
+            { name: 'appointmentDate', label: 'Fecha de la cita', value: format(parseISO(selectedAppointment.appointmentDate), 'yyyy-MM-dd\'T\'HH:mm') },
             { name: 'servicio', label: 'Servicio', value: selectedAppointment.servicio }
           ]}
           handleFieldChange={handleFieldChange}
@@ -475,6 +505,7 @@ const ManageAppointments = () => {
 };
 
 export default ManageAppointments;
+
 
 _____________________________________________________________
 

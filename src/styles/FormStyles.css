@@ -1,60 +1,70 @@
 form {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 500px;
-    margin: 20px auto;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  form h2 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  form input,
-  form textarea,
-  form button {
-    margin-bottom: 15px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-  }
-  
-  form input:focus,
-  form textarea:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  form button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  form button:hover {
-    background-color: #0056b3;
-  }
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 500px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+}
 
+form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
 
+form input,
+form textarea,
+form button {
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
 
-  
-  .form-group {
-    color: black;
-  }
-  
-  .form-group label {
-    font-size: 16px;
-    margin: 8px;
-    display: block;
-    color: black;
-  }
-  
+form input:focus,
+form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+.form-group {
+  color: black;
+}
+
+.form-group label {
+  font-size: 16px;
+  margin: 8px;
+  display: block;
+  color: black;
+}
+
+.patient-option {
+  display: flex;
+  align-items: center;
+}
+
+.patient-option img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
