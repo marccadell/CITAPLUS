@@ -31,6 +31,9 @@ const Navbar = () => {
               <li>
                 <Link to="/manage-appointments">Gestionar Citas</Link>
               </li>
+              <li>
+                <Link to="/patients-list">Listado Pacientes</Link>
+              </li>
             </>
           ) : (
             <li>

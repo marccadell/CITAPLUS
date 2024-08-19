@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase-config';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, getDoc, query, where, getDocs, doc } from 'firebase/firestore';
+import { collection, addDoc, getDoc, query, where, getDocs, doc, Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import AsyncSelect from 'react-select/async';
@@ -69,7 +69,7 @@ const CreateAppointment = () => {
 
     // Check if the selectedDate is already taken
     const appointmentsRef = collection(db, 'appointments');
-    const q = query(appointmentsRef, where('appointmentDate', '==', selectedDate));
+    const q = query(appointmentsRef, where('appointmentDate', '==', Timestamp.fromDate(selectedDateTime)));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -89,10 +89,9 @@ const CreateAppointment = () => {
     }));
   };
 
-
   const handleSelectChange = async (selectedOption, action) => {
     if (action.name === 'patientName') {
-      const patientId = selectedOption.value;
+      const patientId = selectedOption.value; // ID del documento en `patients`
       const patientDocRef = doc(db, 'patients', patientId);
       const patientDocSnap = await getDoc(patientDocRef);
   
@@ -104,17 +103,17 @@ const CreateAppointment = () => {
         } else {
           setPatientPhotoUrl('');
         }
+  
+        setAppointmentData(prevState => ({
+          ...prevState,
+          patientName: {
+            label: selectedOption.label.props.children[1],
+            value: patientData.id, // Use the patientData.id here if it is a separate field
+          },
+        }));
       } else {
         setPatientPhotoUrl('');
       }
-  
-      setAppointmentData(prevState => ({
-        ...prevState,
-        patientName: {
-          label: selectedOption.label.props.children[1],
-          value: selectedOption.value,
-        },
-      }));
     } else {
       setAppointmentData(prevState => ({
         ...prevState,
@@ -122,7 +121,6 @@ const CreateAppointment = () => {
       }));
     }
   };
-  
 
   const getProfilePhotoUrl = async (photoPath) => {
     try {
@@ -150,7 +148,7 @@ const CreateAppointment = () => {
       const nombreCompleto = `${data.nombreCompleto.primerNombre} ${data.nombreCompleto.apellidoPaterno} ${data.nombreCompleto.apellidoMaterno}`;
       const photoUrl = data.fotoPerfil ? await getProfilePhotoUrl(data.fotoPerfil) : '';
       return {
-        value: doc.id,
+        value: doc.id, // Ensure that this is the document ID
         label: (
           <div className="patient-option">
             {photoUrl && (
@@ -163,7 +161,6 @@ const CreateAppointment = () => {
     }));
     return patientOptions;
   };
-  
 
   const loadServices = async (inputValue) => {
     const servicesRef = collection(db, 'serviceAppointment');
@@ -201,17 +198,20 @@ const CreateAppointment = () => {
       return;
     }
   
+    // Convertir la fecha de la cita a un Timestamp de Firestore
+    const appointmentTimestamp = Timestamp.fromDate(new Date(appointmentDate));
+  
     const appointment = {
-      patientId: patientName.value,
+      patientId: patientName.value, // Ensure this is the correct ID field
       patientName: patientName.label,
       doctorName: doctorName,
-      appointmentDate: appointmentDate,
+      appointmentDate: appointmentTimestamp, // Guardar como Timestamp
       notes: appointmentData.notes || null,
       observaciones: appointmentData.observaciones || null,
       diagnostico: diagnostico,
       centroMedico: centroMedico,
       servicio: servicio.label,
-      createdAt: new Date(),
+      createdAt: Timestamp.fromDate(new Date()), // Timestamp para la fecha de creación
     };
   
     console.log('Appointment Data:', appointment);
@@ -236,7 +236,6 @@ const CreateAppointment = () => {
       toast.error('Hubo un error al crear la cita. Por favor, inténtalo de nuevo.');
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -298,6 +297,8 @@ const CreateAppointment = () => {
 };
 
 export default CreateAppointment;
+
+
 
 
 

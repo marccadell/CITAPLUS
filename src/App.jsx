@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import CreateAppointment from './components/Appointment/CreateAppointment';
 import ViewAppointments from './components/Appointment/ViewAppointments';
 import ManageAppointments from './components/Appointment/ManageAppointments';
+import PatientsList from './components/Patients/PatientsList';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './guards/ProtectedRoute';
@@ -25,6 +26,7 @@ function App() {
           <Route path="/create-appointment" element={<ProtectedRoute><CreateAppointment /></ProtectedRoute>} />
           <Route path="/manage-appointments" element={<ProtectedRoute><ManageAppointments /></ProtectedRoute>} />
           <Route path="/view-appointments" element={<ProtectedRoute><ViewAppointments /></ProtectedRoute>} />
+          <Route path="/patients-list" element={<ProtectedRoute><PatientsList /></ProtectedRoute>} />
           <Route path="/" element={<Dashboard />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
