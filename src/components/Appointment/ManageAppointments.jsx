@@ -8,7 +8,7 @@ import ModalDelete from '../Modals/ModalDelete';
 import ModalInfoAppointment from '../Modals/ModalInfoAppointment';
 
 import { db } from '../../firebase-config';
-import { collection, onSnapshot, deleteDoc, doc, updateDoc, getDoc, Timestamp } from 'firebase/firestore';
+import { collection, onSnapshot, deleteDoc, doc, updateDoc, getDoc, getDocs, Timestamp, query, where } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,65 +30,90 @@ const ManageAppointments = () => {
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+  
   useEffect(() => {
     const appointmentsRef = collection(db, 'appointments');
-    const unsubscribe = onSnapshot(appointmentsRef, async (snapshot) => {
-      const appointmentsData = await Promise.all(snapshot.docs.map(async (appointmentDoc) => {
-        const appointment = appointmentDoc.data();
-        const patientId = appointment.patientId;
-
-        if (!patientId) {
-          console.error('El documento de cita no tiene un campo "patientId" definido.');
-          return null;
-        }
-
-        const patientRef = doc(db, 'patients', patientId);
-        const patientSnapshot = await getDoc(patientRef);
-        let patientPhotoUrl = '';
-
-        if (patientSnapshot.exists()) {
-          const patientData = patientSnapshot.data();
-          const storage = getStorage();
-          const photoPath = patientData.fotoPerfil;
-
-          if (photoPath) {
-            const photoRef = ref(storage, photoPath);
-            try {
-              patientPhotoUrl = await getDownloadURL(photoRef);
-            } catch (error) {
-              console.error('Error al obtener la URL de la foto del paciente:', error);
+    const unsubscribe = onSnapshot(
+      appointmentsRef,
+      async (snapshot) => {
+        const appointmentsData = await Promise.all(
+          snapshot.docs.map(async (appointmentDoc) => {
+            const appointment = appointmentDoc.data();
+            const patientId = appointment.patientId;
+  
+            if (!patientId) {
+              console.error('El documento de cita no tiene un campo "patientId" definido.');
+              return null;
             }
-          }
-        }
-
-        // Manejo de la fecha
-        let appointmentDate = appointment.appointmentDate;
-
-        if (appointmentDate instanceof Timestamp) {
-          appointmentDate = appointmentDate.toDate();
-        } else if (typeof appointmentDate === 'string') {
-          appointmentDate = parseISO(appointmentDate);
-        } else if (!(appointmentDate instanceof Date)) {
-          console.error('El campo appointmentDate no es del tipo esperado');
-          return null;
-        }
-
-        return {
-          id: appointmentDoc.id,
-          ...appointment,
-          appointmentDate,
-          patientPhotoUrl,
-        };
-      }));
-
-      setAppointments(appointmentsData.filter(app => app !== null));
-    }, (error) => {
-      console.error('Error al obtener los documentos de las citas:', error);
-    });
-
+  
+            // Realiza la consulta en la colección de pacientes utilizando el campo 'id'
+            const patientsRef = collection(db, 'patients');
+            const patientQuery = query(patientsRef, where('id', '==', patientId));
+            const patientSnapshot = await getDocs(patientQuery);
+  
+            let patientPhotoUrl = '';
+  
+            if (!patientSnapshot.empty) {
+              const patientDoc = patientSnapshot.docs[0];  // Suponiendo que solo hay un documento por cada ID
+              const patientData = patientDoc.data();
+              const photoPath = patientData.fotoPerfil;
+  
+              if (photoPath) {
+                const storage = getStorage();
+                const photoRef = ref(storage, photoPath);
+  
+                try {
+                  patientPhotoUrl = await getDownloadURL(photoRef);
+                } catch (error) {
+                  console.error('Error al obtener la URL de la foto del paciente:', error);
+                }
+              } else {
+                console.warn(`El paciente con ID ${patientId} no tiene una foto de perfil.`);
+              }
+            } else {
+              console.warn(`No se encontró el documento del paciente con ID ${patientId}`);
+              return {
+                id: appointmentDoc.id,
+                ...appointment,
+                appointmentDate: appointment.appointmentDate instanceof Timestamp
+                  ? appointment.appointmentDate.toDate()
+                  : parseISO(appointment.appointmentDate),
+                patientPhotoUrl: '',  // Dejar la URL de la foto vacía si no se encuentra el paciente
+                patientName: 'Paciente desconocido'  // También puedes agregar un nombre por defecto
+              };
+            }
+  
+            // Manejo de la fecha
+            let appointmentDate = appointment.appointmentDate;
+  
+            if (appointmentDate instanceof Timestamp) {
+              appointmentDate = appointmentDate.toDate();
+            } else if (typeof appointmentDate === 'string') {
+              appointmentDate = parseISO(appointmentDate);
+            } else if (!(appointmentDate instanceof Date)) {
+              console.error('El campo appointmentDate no es del tipo esperado');
+              return null;
+            }
+  
+            return {
+              id: appointmentDoc.id,
+              ...appointment,
+              appointmentDate,
+              patientPhotoUrl,
+            };
+          })
+        );
+  
+        setAppointments(appointmentsData.filter((app) => app !== null));
+      },
+      (error) => {
+        console.error('Error al obtener los documentos de las citas:', error);
+      }
+    );
+  
     return () => unsubscribe();
   }, []);
-
+  
   useEffect(() => {
     const servicesRef = collection(db, 'serviceAppointment');
     const unsubscribe = onSnapshot(servicesRef, (snapshot) => {

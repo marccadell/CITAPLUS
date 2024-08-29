@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 
 import Navbar from './components/Navbar';
+import ChangePassword from './pages/Profile/ChangePassword';
 
 import CreateAppointment from './components/Appointment/CreateAppointment';
 import ViewAppointments from './components/Appointment/ViewAppointments';
@@ -27,6 +28,7 @@ function App() {
           <Route path="/manage-appointments" element={<ProtectedRoute><ManageAppointments /></ProtectedRoute>} />
           <Route path="/view-appointments" element={<ProtectedRoute><ViewAppointments /></ProtectedRoute>} />
           <Route path="/patients-list" element={<ProtectedRoute><PatientsList /></ProtectedRoute>} />
+          <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
           <Route path="/" element={<Dashboard />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
