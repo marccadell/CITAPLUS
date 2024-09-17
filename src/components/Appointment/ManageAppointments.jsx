@@ -156,7 +156,6 @@ const ManageAppointments = () => {
 
   const handleFieldChange = (field, value) => {
     if (field === 'appointmentDate') {
-      // Convertir la fecha en formato datetime-local a un objeto Date
       value = new Date(value);
     }
     setSelectedAppointment((prev) => ({
@@ -173,7 +172,6 @@ const ManageAppointments = () => {
 
   const confirmUpdate = async () => {
     try {
-      // Convertir appointmentDate a Timestamp
       const updatedAppointment = {
         ...selectedAppointment,
         appointmentDate: Timestamp.fromDate(new Date(selectedAppointment.appointmentDate)),
@@ -247,9 +245,10 @@ const ManageAppointments = () => {
               </button>
             </div>
             <img src={appointment.patientPhotoUrl} alt="Foto de perfil del paciente" className="patient-photo" />
-            <h3>Paciente: {appointment.patientName}</h3>
-            <p>Fecha de la cita: {format(appointment.appointmentDate, 'dd/MM/yyyy HH:mm', { locale: es })}</p>
-            <p>Servicio: {appointment.servicio || 'No especificado'}</p>
+            <h3>{appointment.patientName}</h3>
+            <p><strong>Fecha: </strong> {format(appointment.appointmentDate, 'dd/MM/yyyy HH:mm', { locale: es })}</p>
+            <p><strong>Servicio: </strong> {appointment.servicio || 'No especificado'}</p>
+            <p><strong>Diagnóstico: </strong> {appointment.diagnostico}</p>
             <div className="appointment-actions">
               <button
                 className={`delete-button ${isPastAppointment(appointment.appointmentDate) ? 'button-disabled' : ''}`}

@@ -3,9 +3,11 @@ import { db } from '../../firebase-config';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, getDoc, query, where, getDocs, doc, Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import AsyncSelect from 'react-select/async';
 import '../../styles/FormStyles.css';
+import "react-toastify/dist/ReactToastify.css";
+
 
 const CreateAppointment = () => {
   const { currentUser } = useAuth();

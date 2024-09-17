@@ -455,13 +455,11 @@ const Register = () => {
         userData.ciudad = doctorData.ciudad;
         userData.codigoPostal = doctorData.codigoPostal;
         userData.telefonoContacto = doctorData.telefonoContacto;
-        userData.correoElectronico = doctorData.correoElectronico;
         userData.nacionalidad = doctorData.nacionalidad;
         userData.numeroIdentificacionPersonal = doctorData.numeroIdentificacionPersonal;
         userData.especialidad = doctorData.especialidad;
         userData.centromedico = doctorData.centromedico;
         userData.numeroLicenciaMedica = doctorData.numeroLicenciaMedica;
-        userData.anosExperiencia = doctorData.anosExperiencia;
       }
 
       // Almacenar información adicional en Firestore en la colección correspondiente
@@ -812,13 +810,6 @@ const Register = () => {
               onChange={(e) => setDoctorData({ ...doctorData, telefonoContacto: e.target.value })}
               required
             />
-            <input
-              type="email"
-              placeholder="Correo Electrónico"
-              value={doctorData.correoElectronico}
-              onChange={(e) => setDoctorData({ ...doctorData, correoElectronico: e.target.value })}
-              required
-            />
             <div className="form-group">
               <label>Seleccione su Nacionalidad:</label>
               <Select
@@ -864,13 +855,6 @@ const Register = () => {
                 placeholder="Centro Médico"
               />
             </div>
-            <input
-              type="text"
-              placeholder="Años de Experiencia"
-              value={doctorData.anosExperiencia}
-              onChange={(e) => setDoctorData({ ...doctorData, anosExperiencia: e.target.value })}
-              required
-            />
           </div>
         )}
         </div>

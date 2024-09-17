@@ -1,143 +1,238 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../../firebase-config';
-import { useAuth } from '../../contexts/AuthContext';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { db, auth } from '../../firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
 import '../../styles/ViewAppointments.css';
 
 const ViewAppointments = () => {
-  const { currentUser } = useAuth();
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [patientId, setPatientId] = useState(null);
 
   useEffect(() => {
-    if (!currentUser) return;
-
-    const q = query(collection(db, 'appointments'), where('patientEmail', '==', currentUser.email));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const appointmentsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setAppointments(appointmentsData);
-    });
-
-    return () => unsubscribe();
-  }, [currentUser]);
-
-  return (
-    <div className="view-appointments">
-      <h2>Mis Citas</h2>
-      <ul>
-        {appointments.map((appointment) => (
-          <li key={appointment.id}>
-            <h3>{appointment.doctorName}</h3>
-            <p>Fecha: {appointment.date}</p>
-            <p>Hora: {appointment.time}</p>
-            <p>Especialidad: {appointment.specialty}</p>
-            <p>Descripción: {appointment.description}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default ViewAppointments;
-
-
-{/*
-import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase-config';
-import { useAuth } from '../contexts/AuthContext';
-import '../styles/ViewAppointments.css';
-
-const ViewAppointments = () => {
-  const { currentUser } = useAuth();
-  const [appointments, setAppointments] = useState([]);
-
-  useEffect(() => {
-    const fetchAppointments = async () => {
+    const fetchPatientId = async (user) => {
       try {
-        const q = query(collection(db, 'appointments'), where('patientEmail', '==', currentUser.email));
-        const querySnapshot = await getDocs(q);
-        const appointmentsData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setAppointments(appointmentsData);
+        const patientCollection = collection(db, 'patients');
+        const patientQuery = query(patientCollection, where('email', '==', user.email));
+
+        const patientSnapshot = await getDocs(patientQuery);
+
+        if (!patientSnapshot.empty) {
+          const patientData = patientSnapshot.docs[0].data();
+          return patientData.id;
+        } else {
+          console.log('No patient data found for user email:', user.email);
+          return null;
+        }
       } catch (error) {
-        console.error('Error al obtener las citas:', error);
+        console.error("Error fetching patient ID: ", error);
+        return null;
       }
     };
 
-    if (currentUser) {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const fetchedPatientId = await fetchPatientId(user);
+        setPatientId(fetchedPatientId);
+      } else {
+        setPatientId(null);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  useEffect(() => {
+    if (patientId) {
+      const fetchAppointments = async () => {
+        try {
+          const now = Timestamp.now();
+
+          const q = query(
+            collection(db, 'appointments'),
+            where('patientId', '==', patientId),
+            where('appointmentDate', '>=', now)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            console.log('No appointments found for patientId:', patientId);
+            setAppointments([]);
+          } else {
+            const appointmentsList = querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            appointmentsList.sort((a, b) => a.appointmentDate.toDate() - b.appointmentDate.toDate());
+
+            setAppointments(appointmentsList);
+          }
+        } catch (error) {
+          console.error("Error fetching appointments: ", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
       fetchAppointments();
     }
-  }, [currentUser]);
+  }, [patientId]);
 
   return (
-    <div className="view-appointments">
-      <h2>Mis Citas</h2>
-      <ul>
-        {appointments.map((appointment) => (
-          <li key={appointment.id}>
-            <h3>{appointment.doctorName}</h3>
-            <p>Fecha: {appointment.date}</p>
-            <p>Hora: {appointment.time}</p>
-            <p>Especialidad: {appointment.specialty}</p>
-            <p>Descripción: {appointment.description}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="appointments-container">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <h2>Citas Programadas</h2>
+          {appointments.length === 0 ? (
+            <p>No hay citas programadas</p>
+          ) : (
+            <div className="appointments-list">
+              {appointments.map(appointment => (
+                <div key={appointment.id} className="appointment-card">
+                <div className="appointment-header">
+                  <h3>Cita con el Doctor {appointment.doctorName}</h3>
+                </div>
+                <div className="appointment-body">
+                  <div className="appointment-date">
+                    <p><strong>Fecha:</strong> {appointment.appointmentDate.toDate().toLocaleDateString()}</p>
+                    <p><strong>Hora:</strong> {appointment.appointmentDate.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                  </div>
+                  <p><strong>{appointment.centroMedico}</strong></p>
+                  <p>{appointment.servicio}</p>
+                </div>
+              </div>
+              
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 export default ViewAppointments;
 
+
+
 {/*
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebase-config';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
-import '../styles/ViewStyles.css';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { db, auth } from '../../firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
+import '../../styles/ViewAppointments.css';
 
 const ViewAppointments = () => {
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [patientId, setPatientId] = useState(null);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      const appointmentsCollection = collection(db, 'appointments');
-      const appointmentsSnapshot = await getDocs(appointmentsCollection);
-      const appointmentsList = appointmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setAppointments(appointmentsList);
+    const fetchPatientId = async (user) => {
+      try {
+        const patientCollection = collection(db, 'patients');
+        const patientQuery = query(patientCollection, where('email', '==', user.email));
+
+        const patientSnapshot = await getDocs(patientQuery);
+
+        if (!patientSnapshot.empty) {
+          const patientData = patientSnapshot.docs[0].data();
+          return patientData.id;
+        } else {
+          console.log('No patient data found for user email:', user.email);
+          return null;
+        }
+      } catch (error) {
+        console.error("Error fetching patient ID: ", error);
+        return null;
+      }
     };
 
-    fetchAppointments();
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const fetchedPatientId = await fetchPatientId(user);
+        setPatientId(fetchedPatientId);
+      } else {
+        setPatientId(null);
+      }
+    });
+
+    return () => unsubscribeAuth();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta cita?')) {
-      await deleteDoc(doc(db, 'appointments', id));
-      setAppointments(appointments.filter(appointment => appointment.id !== id));
+  useEffect(() => {
+    if (patientId) {
+      const fetchAppointments = async () => {
+        try {
+          const now = Timestamp.now();
+
+          const q = query(
+            collection(db, 'appointments'),
+            where('patientId', '==', patientId),
+            where('appointmentDate', '>=', now)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            console.log('No appointments found for patientId:', patientId);
+            setAppointments([]);
+          } else {
+            const appointmentsList = querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            appointmentsList.sort((a, b) => a.appointmentDate.toDate() - b.appointmentDate.toDate());
+
+            setAppointments(appointmentsList);
+          }
+        } catch (error) {
+          console.error("Error fetching appointments: ", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchAppointments();
     }
-  };
+  }, [patientId]);
 
   return (
-    <div>
-      <h2>Ver Citas</h2>
-      <ul>
-        {appointments.map(appointment => (
-          <li key={appointment.id}>
-            <p><strong>Paciente:</strong> {appointment.patientName}</p>
-            <p><strong>Doctor:</strong> {appointment.doctorName}</p>
-            <p><strong>Fecha:</strong> {new Date(appointment.appointmentDate).toLocaleString()}</p>
-            <p><strong>Notas:</strong> {appointment.notes}</p>
-            <Link to={`/edit-appointment/${appointment.id}`}>Editar</Link>
-            <button onClick={() => handleDelete(appointment.id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
+    <div className="appointments-container">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <h2>Tus Citas</h2>
+          {appointments.length === 0 ? (
+            <p>No hay citas programadas</p>
+          ) : (
+            <div className="appointments-list">
+              {appointments.map(appointment => (
+                <div key={appointment.id} className="appointment-card">
+                <div className="appointment-header">
+                  <h3>Cita con el Doctor {appointment.doctorName}</h3>
+                </div>
+                <div className="appointment-body">
+                  <div className="appointment-date">
+                    <p><strong>Fecha:</strong> {appointment.appointmentDate.toDate().toLocaleDateString()}</p>
+                    <p><strong>Hora:</strong> {appointment.appointmentDate.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                  </div>
+                  <p><strong>{appointment.centroMedico}</strong></p>
+                  <p>{appointment.servicio}</p>
+                </div>
+              </div>
+              
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

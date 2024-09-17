@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/Modals/ModalPatientHistory.css';
 
 const ModalPatientHistory = ({ isOpen, onClose, appointments }) => {
@@ -16,8 +18,8 @@ const ModalPatientHistory = ({ isOpen, onClose, appointments }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <button className="close-button" onClick={onClose}>
-          &times;
+        <button className="modal-history-close-button" onClick={onClose}>
+          <FontAwesomeIcon icon={faTimes} />
         </button>
         <h2>Historial de Citas</h2>
         <ul className="appointments-list">

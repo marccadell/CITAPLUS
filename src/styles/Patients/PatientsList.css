@@ -1,10 +1,13 @@
 .patients-list-container {
     padding: 20px;
     margin: 0 auto;
-    max-width: 1000px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px dashed black;
+    width: 100vw; 
+    box-sizing: border-box; 
+    overflow: auto;
   }
   
   .patients-list-title {
@@ -15,9 +18,10 @@
     color: #333;
   }
   
-  .patients-list-table {
+  .patients-list-table {  
     width: 100%;
     border-collapse: collapse;
+    border: 5px dashed red;
   }
   
   .patients-list-header {
@@ -44,30 +48,5 @@
     border-bottom: 1px solid #ddd;
   }
   
-  .edit-button, .delete-button {
-    padding: 6px 12px;
-    margin: 0 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-  }
   
-  .edit-button {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .delete-button {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .edit-button:hover {
-    background-color: #218838;
-  }
-  
-  .delete-button:hover {
-    background-color: #c82333;
-  }
   
