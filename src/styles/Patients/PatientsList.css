@@ -1,27 +1,26 @@
 .patients-list-container {
-    padding: 20px;
+    padding: 25px;
+    font-size: 14px;
     margin: 0 auto;
     background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 2px dashed black;
-    width: 100vw; 
+    box-shadow: var(--bs);
+    width: 95vw; 
     box-sizing: border-box; 
     overflow: auto;
   }
   
   .patients-list-title {
-    font-size: 24px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 20px;
+    margin: 50px auto 30px auto;
     color: #333;
   }
   
   .patients-list-table {  
     width: 100%;
     border-collapse: collapse;
-    border: 5px dashed red;
+    border: 1px solid rgba(187, 187, 187, 0.636);
   }
   
   .patients-list-header {
@@ -49,4 +48,18 @@
   }
   
   
-  
+
+  @media (max-width: 750px){
+    .patients-list-container {
+      padding: 20px;
+      font-size: 12px;
+      margin: 0 auto;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 90vw; 
+      box-sizing: border-box; 
+      overflow: auto;
+    }
+
+  }

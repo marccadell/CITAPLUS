@@ -1,7 +1,9 @@
+
 .manage-appointments {
   padding: 20px;
-  background-color: #f7f9fc;
-  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .manage-appointments h2 {
@@ -11,6 +13,7 @@
   font-size: 24px;
   font-weight: bold;
 }
+
 .manage-appointments h3 {
   text-align: left;
   color: #333;
@@ -20,11 +23,54 @@
   font-weight: bold;
 }
 
-.appointments-container {
+.calendar-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.react-calendar {
+  width: 100%;
+  max-width: 800px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: auto;
+}
+
+.react-calendar__tile--now {
+  background-color: #f5e31d !important;
+}
+
+.react-calendar__tile--active {
+  font-weight: bold;
+  color: black !important;
+}
+
+.react-calendar__tile--hasActive:hover {
+  font-weight: bold;
+}
+
+.appointments-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
+  justify-items: center;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .appointments-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .appointments-container {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
 }
 
 .appointment-card {
@@ -32,7 +78,8 @@
   position: relative;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   padding: 20px;
   transition: transform 0.3s ease;
   color: black;
@@ -41,7 +88,6 @@
 .appointment-card.past-appointment {
   opacity: 0.4;
   background-color: #d3d3d3;
-  
 }
 
 .unavailable-text {
@@ -108,6 +154,7 @@
 .delete-button {
   background-color: #dc3545;
   color: white;
+  width: 80%;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
@@ -117,9 +164,10 @@
   transition: background-color 0.3s ease;
 }
 
-.edit-button{
+.edit-button {
   background-color: #2799e4;
   color: white;
+  width: 80%;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
@@ -127,8 +175,8 @@
   margin-right: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
 }
+
 .delete-button:hover {
   background-color: #c82333;
 }
@@ -138,17 +186,10 @@
 }
 
 .button-disabled, .button-disabled:hover {
-  background-color: #e0e0e0; 
-  color: #a0a0a0; 
-  cursor: not-allowed; 
-  border: 1px solid #d0d0d0; 
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+  border: 1px solid #d0d0d0;
 }
-
-
-
-
-
-
-
 
 

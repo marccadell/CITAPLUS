@@ -14,16 +14,16 @@ import PatientsList from './components/Patients/PatientsList';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './guards/ProtectedRoute';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
+import './index.css';
 
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-      <ToastContainer autoClose={1000} closeButton={false} />
         <Navbar />
         <Routes>
           <Route path="/register" element={<Register />} />

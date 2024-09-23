@@ -1,11 +1,9 @@
-// ModalEditAppointment.js
-
 import React, { useState } from 'react';
 import Select from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { toast } from 'react-toastify'; // Importar Toastify
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de Toastify
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/ModalEditAppointment.css';
 
 const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, handleSubmit, serviceOptions }) => {
@@ -29,13 +27,12 @@ const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, ha
             control: (provided) => ({
               ...provided,
               width: '100%',
-              minWidth: '500px', 
+              minWidth: '260px',
               color: 'black',
             }),
             menu: (provided) => ({
               ...provided,
               width: '100%',
-              maxWidth: '400px', 
               color: 'black',
             }),
           }}
@@ -48,9 +45,8 @@ const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, ha
       const handleDateChange = (e) => {
         const selectedDateValue = new Date(e.target.value);
 
-        // Validar si la fecha seleccionada es pasada
         if (selectedDateValue < now) {
-          toast.warn('Selecciona una fecha válida'); // Mostrar Toastify de advertencia
+          toast.warn('Selecciona una fecha válida');
           return;
         }
 
@@ -99,9 +95,9 @@ const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, ha
     e.preventDefault();
     const allFieldsFilled = fields.every(field => {
       if (field.name === 'appointmentDate') {
-        return selectedDate; // Asegurarse de que la fecha esté seleccionada
+        return selectedDate;
       }
-      return field.value && field.value.trim() !== ''; // Asegurarse de que el campo no esté vacío
+      return field.value && field.value.trim() !== '';
     });
 
     if (!allFieldsFilled) {
@@ -109,12 +105,12 @@ const ModalEditAppointment = ({ closeModal, title, fields, handleFieldChange, ha
       return;
     }
 
-    handleSubmit(e); // Llamar a handleSubmit solo si todos los campos están completos
+    handleSubmit(e);
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
+    <div className="modalEditAppointment">
+      <div className="modal-content-edit">
         <button className="modal-close-button" onClick={closeModal}>
           <FontAwesomeIcon icon={faTimes} />
         </button>

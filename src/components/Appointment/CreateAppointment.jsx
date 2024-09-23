@@ -3,7 +3,7 @@ import { db } from '../../firebase-config';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, getDoc, query, where, getDocs, doc, Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import AsyncSelect from 'react-select/async';
 import '../../styles/FormStyles.css';
 import "react-toastify/dist/ReactToastify.css";
@@ -69,7 +69,6 @@ const CreateAppointment = () => {
       appointmentDate: selectedDate,
     }));
 
-    // Check if the selectedDate is already taken
     const appointmentsRef = collection(db, 'appointments');
     const q = query(appointmentsRef, where('appointmentDate', '==', Timestamp.fromDate(selectedDateTime)));
     const querySnapshot = await getDocs(q);
@@ -93,10 +92,10 @@ const CreateAppointment = () => {
 
   const handleSelectChange = async (selectedOption, action) => {
     if (action.name === 'patientName') {
-      const patientId = selectedOption.value; // ID del documento en `patients`
+      const patientId = selectedOption.value;
       const patientDocRef = doc(db, 'patients', patientId);
       const patientDocSnap = await getDoc(patientDocRef);
-  
+
       if (patientDocSnap.exists()) {
         const patientData = patientDocSnap.data();
         if (patientData && patientData.fotoPerfil) {
@@ -105,12 +104,12 @@ const CreateAppointment = () => {
         } else {
           setPatientPhotoUrl('');
         }
-  
+
         setAppointmentData(prevState => ({
           ...prevState,
           patientName: {
             label: selectedOption.label.props.children[1],
-            value: patientData.id, // Use the patientData.id here if it is a separate field
+            value: patientData.id,
           },
         }));
       } else {
@@ -143,14 +142,14 @@ const CreateAppointment = () => {
       where('nombreCompleto.primerNombre', '>=', inputValue),
       where('nombreCompleto.primerNombre', '<=', inputValue + '\uf8ff')
     );
-  
+
     const querySnapshot = await getDocs(q);
     const patientOptions = await Promise.all(querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const nombreCompleto = `${data.nombreCompleto.primerNombre} ${data.nombreCompleto.apellidoPaterno} ${data.nombreCompleto.apellidoMaterno}`;
       const photoUrl = data.fotoPerfil ? await getProfilePhotoUrl(data.fotoPerfil) : '';
       return {
-        value: doc.id, // Ensure that this is the document ID
+        value: doc.id,
         label: (
           <div className="patient-option">
             {photoUrl && (
@@ -181,7 +180,7 @@ const CreateAppointment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const {
       patientName,
       appointmentDate,
@@ -189,38 +188,37 @@ const CreateAppointment = () => {
       centroMedico,
       servicio,
     } = appointmentData;
-  
+
     if (!patientName || !appointmentDate || !diagnostico || !centroMedico || !servicio) {
       toast.error('Por favor, verifique que todos los campos sean correctos');
       return;
     }
-  
+
     if (!isAvailable) {
       toast.error('No se puede crear la cita debido a la disponibilidad de la fecha.');
       return;
     }
-  
-    // Convertir la fecha de la cita a un Timestamp de Firestore
+
     const appointmentTimestamp = Timestamp.fromDate(new Date(appointmentDate));
-  
+
     const appointment = {
-      patientId: patientName.value, // Ensure this is the correct ID field
+      patientId: patientName.value,
       patientName: patientName.label,
       doctorName: doctorName,
-      appointmentDate: appointmentTimestamp, // Guardar como Timestamp
+      appointmentDate: appointmentTimestamp,
       notes: appointmentData.notes || null,
       observaciones: appointmentData.observaciones || null,
       diagnostico: diagnostico,
       centroMedico: centroMedico,
       servicio: servicio.label,
-      createdAt: Timestamp.fromDate(new Date()), // Timestamp para la fecha de creación
+      createdAt: Timestamp.fromDate(new Date()),
     };
-  
+
     console.log('Appointment Data:', appointment);
-  
+
     try {
       await addDoc(collection(db, 'appointments'), appointment);
-  
+
       setAppointmentData({
         patientName: null,
         appointmentDate: '',
@@ -231,8 +229,8 @@ const CreateAppointment = () => {
         servicio: null,
       });
       setPatientPhotoUrl('');
-  
-      toast.success('Cita creada exitosamente.');
+
+      toast.success('Cita Creada');
     } catch (error) {
       console.error('Error al crear la cita:', error);
       toast.error('Hubo un error al crear la cita. Por favor, inténtalo de nuevo.');
@@ -246,6 +244,7 @@ const CreateAppointment = () => {
         cacheOptions
         loadOptions={loadPatients}
         defaultOptions
+        classNamePrefix="custom-select"
         onChange={(option) => handleSelectChange(option, { name: 'patientName' })}
         placeholder="Buscar paciente"
         value={appointmentData.patientName}
@@ -261,6 +260,7 @@ const CreateAppointment = () => {
         cacheOptions
         loadOptions={loadServices}
         defaultOptions
+        classNamePrefix="custom-select"
         onChange={(option) => handleSelectChange(option, { name: 'servicio' })}
         placeholder="Buscar servicio"
         value={appointmentData.servicio}
@@ -293,7 +293,7 @@ const CreateAppointment = () => {
         onChange={handleChange}
         value={appointmentData.notes || ''}
       />
-      <button type="submit" disabled={!isAvailable}>Crear Cita</button>
+      <button type="submit" disabled={!isAvailable}>Crear</button>
     </form>
   );
 };
@@ -301,14 +301,7 @@ const CreateAppointment = () => {
 export default CreateAppointment;
 
 
-
-
-
-
-
-
-
-{/* 
+{/*
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase-config';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';

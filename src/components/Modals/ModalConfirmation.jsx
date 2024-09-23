@@ -4,7 +4,7 @@ import '../../styles/ModalConfirmation.css';
 const ModalConfirmation = ({ handleCancel, title, message, onConfirm }) => {
   return (
     <div className="modal">
-      <div className="modal-content confirmation">
+      <div className="modal-content-confirmation">
         <h2>{title}</h2>
         <p>{message}</p>
         <div className="modal-buttons">
