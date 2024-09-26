@@ -5,8 +5,10 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
+import { showToastSuccess, showToastError } from '../toastConfig';
 import Select from 'react-select';
-import '../styles/Register.css'; 
+import '../styles/Pages/Register.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -66,8 +68,8 @@ const Register = () => {
   });
   const [fotoPerfil, setFotoPerfil] = useState(null);
 
-  const [nacionalidades, setNacionalidades] = useState([]); 
-  const [loadingNacionalidades, setLoadingNacionalidades] = useState(true); 
+  const [nacionalidades, setNacionalidades] = useState([]);
+  const [loadingNacionalidades, setLoadingNacionalidades] = useState(true);
 
   const [selectedCommunity, setSelectedCommunity] = useState('');
   const [selectedProvincia, setSelectedProvincia] = useState('');
@@ -89,7 +91,6 @@ const Register = () => {
 
   useEffect(() => {
     const fetchNacionalidades = async () => {
-      // Simulación de una lista de nacionalidades
       const listaNacionalidades = [
         'Afgano',
         'Albanés',
@@ -404,7 +405,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Crear usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -415,10 +415,9 @@ const Register = () => {
         fotoPerfilURL = await getDownloadURL(storageRef);
       }
 
-      // Determinar la colección según el tipo de usuario
       const collectionName = userType === 'patient' ? 'patients' : 'doctors';
       const userData = {
-        id: uuidv4(), // Generar ID único
+        id: uuidv4(),
         username,
         email,
         password,
@@ -429,7 +428,6 @@ const Register = () => {
         fotoPerfil: fotoPerfilURL,
       };
 
-      // Agregar atributos específicos según el tipo de usuario
       if (userType === 'patient') {
         userData.nombreCompleto = patientData.nombreCompleto;
         userData.genero = patientData.genero;
@@ -462,21 +460,20 @@ const Register = () => {
         userData.numeroLicenciaMedica = doctorData.numeroLicenciaMedica;
       }
 
-      // Almacenar información adicional en Firestore en la colección correspondiente
       await setDoc(doc(db, collectionName, user.uid), userData);
 
-      // Redirigir al usuario a la página de login después del registro exitoso
       navigate('/login');
+      showToastSuccess('Se ha registrado exitosamente')
     } catch (error) {
       console.error('Error al registrar el usuario:', error);
-      // Aquí podrías mostrar un mensaje de error al usuario
+      showToastError('Error al registrar el usuario')
     }
   };
 
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
-        <h2>Registro de Usuario</h2>
+        <h1>Registro de Usuario</h1>
         <div className="form-column">
           <input
             type="text"
@@ -557,7 +554,7 @@ const Register = () => {
                 },
               })}
               required
-            />         
+            />
             <input
               type="text"
               placeholder="Segundo Apellido"
@@ -592,13 +589,6 @@ const Register = () => {
                 required
               />
             </div>
-            <input
-              type="text"
-              placeholder="DNI"
-              value={patientData.dni}
-              onChange={(e) => setPatientData({ ...patientData, dni: e.target.value })}
-              required
-            />
             <div className="form-group">
               <label>Seleccione su Nacionalidad:</label>
               <Select
@@ -608,8 +598,16 @@ const Register = () => {
                 onChange={(selectedOption) => setPatientData({ ...patientData, nacionalidad: selectedOption.value })}
                 placeholder="Nacionalidad"
                 isSearchable={true}
+                classNamePrefix="custom-select"
               />
             </div>
+            <input
+              type="text"
+              placeholder="DNI"
+              value={patientData.dni}
+              onChange={(e) => setPatientData({ ...patientData, dni: e.target.value })}
+              required
+            />
             <input
               type="text"
               placeholder="Número Tarjeta Sanitaria"
@@ -670,14 +668,16 @@ const Register = () => {
                 options={comunidadesAutonomasOptions}
                 onChange={handleCommunityChange}
                 placeholder="Comunidad Autónoma"
+                classNamePrefix="custom-select"
               />
             </div>
             <div className="form-group">
               <label>Seleccione su Provincia:</label>
               <Select
                 options={provinciasOptions}
-                onChange={handleProvinciaChange} 
+                onChange={handleProvinciaChange}
                 placeholder="Provincia"
+                classNamePrefix="custom-select"
               />
             </div>
             <input
@@ -701,7 +701,6 @@ const Register = () => {
               onChange={(e) => setPatientData({ ...patientData, telefonoFijo: e.target.value })}
             />
           </div>
-        
         )}
 
         {userType === 'doctor' && (
@@ -744,6 +743,16 @@ const Register = () => {
                 },
               })}
             />
+            <select
+                value={doctorData.genero}
+                onChange={(e) => setDoctorData({ ...doctorData, genero: e.target.value })}
+                required
+              >
+                <option value="">Seleccione Género</option>
+                <option value="male">Masculino</option>
+                <option value="female">Femenino</option>
+                <option value="other">Otro</option>
+            </select>
             <div className="form-group">
               <label>Fecha de Nacimiento:</label>
               <input
@@ -756,16 +765,28 @@ const Register = () => {
                 required
               />
             </div>
-            <select
-              value={doctorData.genero}
-              onChange={(e) => setDoctorData({ ...doctorData, genero: e.target.value })}
-              required
-            >
-              <option value="">Seleccione Género</option>
-              <option value="male">Masculino</option>
-              <option value="female">Femenino</option>
-              <option value="other">Otro</option>
-            </select>       
+            <div className="form-group">
+              <label>Seleccione su Nacionalidad:</label>
+              <Select
+                id="nacionalidad"
+                name="nacionalidad"
+                options={nacionalidades.map(nacionalidad => ({ value: nacionalidad, label: nacionalidad }))}
+                onChange={(selectedOption) => setDoctorData({ ...doctorData, nacionalidad: selectedOption.value })}
+                placeholder="Nacionalidad"
+                isSearchable={true}
+                classNamePrefix="custom-select"
+              />
+            </div>
+            <input
+                type="text"
+                placeholder="DNI"
+                value={doctorData.numeroIdentificacionPersonal}
+                onChange={(e) => setDoctorData({
+                  ...doctorData,
+                  numeroIdentificacionPersonal: e.target.value,
+                })}
+                required
+            />
             <input
               type="text"
               placeholder="Domicilio"
@@ -780,12 +801,20 @@ const Register = () => {
               onChange={(e) => setDoctorData({ ...doctorData, ciudad: e.target.value })}
               required
             />
+            <input
+              type="text"
+              placeholder="Código Postal"
+              value={doctorData.codigoPostal}
+              onChange={(e) => setDoctorData({ ...doctorData, codigoPostal: e.target.value })}
+              required
+            />
             <div className="form-group">
             <label>Seleccione su Comunidad Autónoma:</label>
               <Select
                 options={comunidadesAutonomasOptions}
                 onChange={handleCommunityChange}
                 placeholder="Comunidad Autónoma"
+                classNamePrefix="custom-select"
               />
             </div>
             <div className="form-group">
@@ -794,48 +823,23 @@ const Register = () => {
                 options={provinciasOptions}
                 onChange={handleProvinciaChange}
                 placeholder="Provincia"
+                classNamePrefix="custom-select"
               />
             </div>
-            <input
-              type="text"
-              placeholder="Código Postal"
-              value={doctorData.codigoPostal}
-              onChange={(e) => setDoctorData({ ...doctorData, codigoPostal: e.target.value })}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Teléfono de Contacto"
-              value={doctorData.telefonoContacto}
-              onChange={(e) => setDoctorData({ ...doctorData, telefonoContacto: e.target.value })}
-              required
-            />
-            <div className="form-group">
-              <label>Seleccione su Nacionalidad:</label>
-              <Select
-                id="nacionalidad"
-                name="nacionalidad"
-                options={nacionalidades.map(nacionalidad => ({ value: nacionalidad, label: nacionalidad }))}
-                onChange={(selectedOption) => setDoctorData({ ...doctorData, nacionalidad: selectedOption.value })}
-                placeholder="Nacionalidad"
-                isSearchable={true} 
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="DNI"
-              value={doctorData.numeroIdentificacionPersonal}
-              onChange={(e) => setDoctorData({
-                ...doctorData,
-                numeroIdentificacionPersonal: e.target.value,
-              })}
-              required
-            />
             <div className="form-group">
               <Select
                 options={specialtyOptions}
                 onChange={handleSpecialtyChange}
                 placeholder="Especialidad"
+                classNamePrefix="custom-select"
+              />
+            </div>
+            <div className="form-group">
+              <Select
+                options={medicalCenterOptions}
+                onChange={handleMedicalCenterChange}
+                placeholder="Centro Médico"
+                classNamePrefix="custom-select"
               />
             </div>
             <input
@@ -848,17 +852,17 @@ const Register = () => {
               })}
               required
             />
-            <div className="form-group">
-              <Select
-                options={medicalCenterOptions}
-                onChange={handleMedicalCenterChange}
-                placeholder="Centro Médico"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Teléfono de Contacto"
+              value={doctorData.telefonoContacto}
+              onChange={(e) => setDoctorData({ ...doctorData, telefonoContacto: e.target.value })}
+              required
+            />
           </div>
         )}
         </div>
-        <button type="submit">Register</button>
+        <button type="submit">Registrarse</button>
       </form>
     </div>
   );

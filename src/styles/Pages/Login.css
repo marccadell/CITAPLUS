@@ -13,6 +13,11 @@
     color: #333333;
     text-align: center;
   }
+
+  .register-p {
+    text-align: center;
+    font-size: 14px;
+  }
   
   input, select, textarea {
     width: 100%;

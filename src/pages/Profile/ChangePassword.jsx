@@ -4,6 +4,7 @@ import { auth, db } from '../../firebase-config';
 import { doc, updateDoc } from 'firebase/firestore';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import "../../../public/styles/ChangePassword.css"
 
 const ChangePassword = ({ onSuccess, onError, userRole }) => {
   const [passwordData, setPasswordData] = useState({
@@ -27,20 +28,15 @@ const ChangePassword = ({ onSuccess, onError, userRole }) => {
         throw new Error('El usuario no está autenticado.');
       }
 
-      // Crear las credenciales con EmailAuthProvider
       const credential = EmailAuthProvider.credential(user.email, passwordData.currentPassword);
 
-      // Reautenticar al usuario
       await reauthenticateWithCredential(user, credential);
 
-      // Actualizar la contraseña en Firebase Authentication
       await updatePassword(user, passwordData.newPassword);
 
-      // Determinar la colección correcta según el rol del usuario
       const collectionName = userRole === 'doctor' ? 'doctors' : 'patients';
       const userRef = doc(db, collectionName, user.uid);
 
-      // Actualizar la contraseña en Firestore
       await updateDoc(userRef, {
         password: passwordData.newPassword
       });
@@ -67,7 +63,7 @@ const ChangePassword = ({ onSuccess, onError, userRole }) => {
   return (
     <div className="change-password-view">
       <h2>Cambiar Contraseña</h2>
-      <form onSubmit={handleChangePassword}>
+      <form className='form-change-password' onSubmit={handleChangePassword}>
         <div>
           <label>Contraseña Actual</label>
           <input

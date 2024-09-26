@@ -9,7 +9,9 @@
 
   --clr-main: #007bff;
   --clr-btn-navbar: rgb(255, 255, 255);
+  --clr-btn-hover: #0130fff3;
   --clr-hover-text: rgba(18, 136, 254, 0.727);
+  
 
   --ts: .2s;
   --br: 5px;
@@ -22,24 +24,27 @@
   list-style: none;
   text-decoration: none;
   font-family: "Montserrat", sans-serif;
-  scrollbar-width: thin; 
-  scrollbar-color: var(--clr-main) #fefefe00;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
 }
 
 body {
   background-color: white;
   font-size: 1.6rem;
-  height: 100vh;
   margin: 0;
   overflow-x: hidden;  /* Barra de desplazamiento lateral ocultar */
 }
 
 h1 {
   font-size: 3.2rem;
+  text-align: center;
+  margin: 20px auto 40px;
 }
 
 h2 {
   font-size: 2.8rem;
+  text-align: center;
+  margin: 20px auto 40px;
 }
 
 input {
@@ -57,13 +62,20 @@ button {
   padding: 10px;
   cursor: pointer;
   background-color: #007bff;
-  transition: background-color 0.3s ease;
+  color: white;
+  transition: background-color 0.3s ease !important;
   cursor: pointer;
 }
 
-button:hover {
-  opacity: 0.8;
-  background-color: #0056b3;
+button:hover[type="submit"] {
+  background-color: var(--clr-btn-hover);
 }
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+
+
 
 

@@ -1,17 +1,11 @@
 .form-container {
-  max-width: 800px; 
+  max-width: 800px;
   margin: auto;
   padding: 20px;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.form-container h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-align: center;
 }
 
 .form-container input,
@@ -78,7 +72,6 @@
 }
 
 .form-container .form-group {
-  margin: auto;
   color: black;
 }
 
@@ -106,7 +99,6 @@
 .form-container .form-group .react-select__control {
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 16px;
   
 }
 
@@ -126,4 +118,48 @@
 .form-container .patient-form {
   margin-bottom: 15px;
   color: black;
+}
+
+.custom-select__control {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  box-shadow: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-select__control--is-focused {
+  border-color: #5a67d8;
+  box-shadow: 0 0 8px rgba(90, 103, 216, 0.4);
+}
+
+.custom-select__option {
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+}
+
+.custom-select__option--is-focused {
+  background-color: #f0f0f5;
+}
+
+.custom-select__option--is-selected {
+  background-color: #5a67d8;
+  color: #fff;
+}
+
+.custom-select__menu {
+  border-radius: 6px;
+  box-shadow: var(--bs);
+}
+
+.custom-select__placeholder {
+  color: #aaa;
+}
+
+.custom-select__single-value {
+  color: #333;
 }

@@ -5,9 +5,8 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: var(--bs);
-    width: 95vw; 
-    box-sizing: border-box; 
-    overflow: auto;
+    width: 95vw;
+    box-sizing: border-box;
   }
   
   .patients-list-title {
@@ -17,10 +16,10 @@
     color: #333;
   }
   
-  .patients-list-table {  
+  .patients-list-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid rgba(187, 187, 187, 0.636);
+    border: none;
   }
   
   .patients-list-header {
@@ -46,10 +45,8 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
   }
-  
-  
 
-  @media (max-width: 750px){
+  @media (max-width: 1190px){
     .patients-list-container {
       padding: 20px;
       font-size: 12px;
@@ -57,9 +54,9 @@
       background-color: #f9f9f9;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      width: 90vw; 
-      box-sizing: border-box; 
-      overflow: auto;
+      width: 90vw;
+      box-sizing: border-box;
+      overflow-x: scroll !important;
     }
 
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/ModalConfirmation.css';
+import '../../styles/Modals/ModalConfirmation.css';
 
 const ModalConfirmation = ({ handleCancel, title, message, onConfirm }) => {
   return (

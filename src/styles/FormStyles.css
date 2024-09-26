@@ -73,28 +73,20 @@ form button:active {
   margin: 8px 0;
   display: block;
   color: #555;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .custom-select__control {
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px;
-  margin-bottom: 20px;
-  box-shadow: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.custom-select__control--is-focused {
-  border-color: #5a67d8;
-  box-shadow: 0 0 8px rgba(90, 103, 216, 0.4);
+  background-color: #fff;
+  color: #333;
+  transition: background-color 0.3s ease;
 }
 
 .custom-select__option {
-  padding: 10px;
-  background-color: #fff;
-  color: #333;
+  border-bottom: 0.1px solid rgba(219, 219, 219, 0.348);
+}
+
+.custom-select__option:hover {
+  background-color: #e0f0ff;
 }
 
 .custom-select__option--is-focused {
@@ -107,16 +99,9 @@ form button:active {
 }
 
 .custom-select__menu {
+  background-color: #fff;
   border-radius: 6px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-select__placeholder {
-  color: #aaa;
-}
-
-.custom-select__single-value {
-  color: #333;
 }
 
 .patient-option {
@@ -124,12 +109,7 @@ form button:active {
   align-items: center;
   padding: 8px;
   border-radius: 5px;
-  background-color: #f0f0f5;
   transition: background-color 0.3s ease;
-}
-
-.patient-option:hover {
-  background-color: #e0e0eb;
 }
 
 .patient-option img {

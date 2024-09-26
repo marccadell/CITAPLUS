@@ -7,13 +7,12 @@ const ModalPatientHistory = ({ isOpen, onClose, appointments }) => {
   if (!isOpen) return null;
 
   const formatDate = (dateString) => {
-    // Verificar si dateString es un Timestamp
     const date = dateString.toDate ? dateString.toDate() : new Date(dateString);
     const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     return date.toLocaleDateString('es-ES', options);
   };
 
-  console.log('Appointments in modal:', appointments); // Debugging
+  console.log('Appointments in modal:', appointments);
 
   return (
     <div className="modal-overlay">
@@ -26,13 +25,13 @@ const ModalPatientHistory = ({ isOpen, onClose, appointments }) => {
           {appointments.length > 0 ? (
             appointments.map((appointment) => (
               <li key={appointment.id} className="appointment-item">
-                <strong>{formatDate(appointment.appointmentDate)}</strong>
-                <p>Doctor: {appointment.doctorName}</p>
-                <p>Servicio: {appointment.servicio}</p>
-                <p>Centro Médico: {appointment.centroMedico}</p>
-                <p>Notas: {appointment.notes}</p>
-                <p>Observaciones: {appointment.observaciones}</p>
-                <p>Diagnóstico: {appointment.diagnostico}</p>
+                <strong><a>{formatDate(appointment.appointmentDate)}</a></strong>
+                <p><strong>Doctor:</strong> {appointment.doctorName}</p>
+                <p><strong>Servicio:</strong> {appointment.servicio}</p>
+                <p><strong>Centro Médico:</strong> {appointment.centroMedico}</p>
+                <p><strong>Notas:</strong> {appointment.notes}</p>
+                <p><strong>Observaciones:</strong> {appointment.observaciones}</p>
+                <p><strong>Diagnóstico:</strong> {appointment.diagnostico}</p>
               </li>
             ))
           ) : (

@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase-config';
+import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import '../styles/Login.css';
+import { Link } from 'react-router-dom';
+import { showToastSuccess, showToastError } from '../toastConfig';
+import 'react-toastify/dist/ReactToastify.css';
+import '../styles/Pages/Login.css';
 
 const Login = () => {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState(null); // Para manejar errores
 
   const handleChange = (e) => {
     setFormData({
@@ -19,22 +25,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Reiniciar errores antes de intentar iniciar sesión
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
       console.log('User logged in:', user);
+      navigate('/home')
+      showToastSuccess('Inicio de sesión exitoso')
     } catch (error) {
       console.error('Error logging in:', error.message);
-      setError('Error al iniciar sesión. Verifica tus credenciales e inténtalo de nuevo.'); // Mensaje de error
+      showToastError('Error al iniciar sesión. Verifica tus credenciales e inténtalo de nuevo.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      <h2>Iniciar Sesión</h2>
-      {error && <p className="error-message">{error}</p>}
+      <h1>Iniciar Sesión</h1>
       <input
         type="email"
         name="email"
@@ -51,9 +57,13 @@ const Login = () => {
         onChange={handleChange}
         required
       />
+      <p className='register-p'>
+        ¿No está registrado? <Link to="/register">Regístrase aquí</Link>.
+      </p>
       <button type="submit">Iniciar Sesión</button>
     </form>
   );
 };
 
 export default Login;
+

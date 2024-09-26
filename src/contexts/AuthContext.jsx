@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase-config';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import ClipLoader from 'react-spinners/ClipLoader';
+import '../styles/Components/Loading.css';
 
 const AuthContext = createContext();
 
@@ -17,25 +19,25 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          let collectionName = '';
           let userData = null;
+          let role = null;
 
-          // Determina el tipo de usuario consultando primero en 'patients'
           const patientDoc = await getDoc(doc(db, 'patients', user.uid));
           if (patientDoc.exists()) {
-            collectionName = 'patients';
             userData = patientDoc.data();
-          } else {
-            // Si no es paciente, entonces es doctor (se asume que cada usuario está en una sola colección)
+            role = 'patient';
+          }
+
+          if (!userData) {
             const doctorDoc = await getDoc(doc(db, 'doctors', user.uid));
             if (doctorDoc.exists()) {
-              collectionName = 'doctors';
               userData = doctorDoc.data();
+              role = 'doctor';
             }
           }
 
-          if (userData) {
-            setCurrentUser({ ...user, role: collectionName === 'patients' ? 'patient' : 'doctor', userData });
+          if (userData && role) {
+            setCurrentUser({ ...user, role, userData });
           } else {
             setCurrentUser(null);
           }
@@ -75,7 +77,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="loading-container">
+        <ClipLoader size={50} color={"#123abc"} loading={loading} />
+      </div>
+    );
   }
 
   return (
@@ -86,7 +92,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-
-
-
-

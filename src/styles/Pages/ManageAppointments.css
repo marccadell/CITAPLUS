@@ -31,13 +31,19 @@
 }
 
 .react-calendar {
-  width: 100%;
+  width: 100% !important;
   max-width: 800px;
-  background-color: white;
+  background-color: rgba(233, 233, 233, 0.055) !important;
+  box-shadow: var(--bs);
+  padding: 25px;
+  margin: 20px 70px 40px;
+  border: none !important;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: auto;
+}
+
+.react-calendar button {
+  outline: none;
+  color: black;
 }
 
 .react-calendar__tile--now {
@@ -45,12 +51,24 @@
 }
 
 .react-calendar__tile--active {
-  font-weight: bold;
+  font-weight: bold !important;
   color: black !important;
 }
 
 .react-calendar__tile--hasActive:hover {
   font-weight: bold;
+  color: black !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #d10000 !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth,
+.react-calendar__decade-view__years__year--neighboringDecade,
+.react-calendar__century-view__decades__decade--neighboringCentury {
+  color: #757575 !important;
+  opacity: 0.4;
 }
 
 .appointments-container {
@@ -74,7 +92,7 @@
 }
 
 .appointment-card {
-  background-color: #fff;
+  background-color: rgba(233, 233, 233, 0.055) !important;
   position: relative;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -149,6 +167,13 @@
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+}
+
+.no-appointments {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #888;
+  padding: 20px;
 }
 
 .delete-button {
