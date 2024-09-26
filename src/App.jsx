@@ -35,7 +35,6 @@ function App() {
           <Route path="/view-appointments" element={<ProtectedRoute><ViewAppointments /></ProtectedRoute>} />
           <Route path="/patients-list" element={<ProtectedRoute><PatientsList /></ProtectedRoute>} />
           <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
         <Footer/>
       </Router>
