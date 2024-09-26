@@ -19,6 +19,7 @@
     max-width: 500px;
     width: 100%;
     position: relative;
+    text-align: center;
   }
   
   .modal-close-button {
@@ -32,8 +33,8 @@
   
   .modal-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: center;
+    margin: 20px;
   }
   
   .confirm-button,
@@ -42,6 +43,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0 20px
   }
   
   .confirm-button {
@@ -54,3 +56,14 @@
     color: #fff;
   }
   
+
+  @media (max-width: 670px){
+    .confirm-button,
+  .cancel-button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 100px 0 100px;
+  }
+
+  }

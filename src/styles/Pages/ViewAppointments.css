@@ -15,6 +15,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  align-content: center;
   border-left: 5px solid #2980b9;
 }
 
