@@ -58,7 +58,7 @@ const Login = () => {
         required
       />
       <p className='register-p'>
-        ¿No está registrado? <Link to="/register">Regístrase aquí</Link>.
+        ¿No está registrado? <Link to="/register">Regístrate aquí</Link>.
       </p>
       <button type="submit">Iniciar Sesión</button>
     </form>
