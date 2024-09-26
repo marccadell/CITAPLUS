@@ -255,7 +255,6 @@ const ManageAppointments = () => {
               <h3>{appointment.patientName}</h3>
               <p><strong>Fecha: </strong> {format(appointment.appointmentDate, 'dd/MM/yyyy HH:mm', { locale: es })}</p>
               <p><strong>Servicio: </strong> {appointment.servicio || 'No especificado'}</p>
-              <p><strong>Diagnóstico: </strong> {appointment.diagnostico}</p>
               <div className="appointment-actions">
                 <button
                   className={`delete-button ${isPastAppointment(appointment.appointmentDate) ? 'button-disabled' : ''}`}
