@@ -42,28 +42,27 @@ const ManageAppointments = () => {
           snapshot.docs.map(async (appointmentDoc) => {
             const appointment = appointmentDoc.data();
             const patientId = appointment.patientId;
-  
+
             if (!patientId) {
               console.error('El documento de cita no tiene un campo "patientId" definido.');
               return null;
             }
-  
-            // Realiza la consulta en la colección de pacientes utilizando el campo 'id'
+
             const patientsRef = collection(db, 'patients');
             const patientQuery = query(patientsRef, where('id', '==', patientId));
             const patientSnapshot = await getDocs(patientQuery);
-  
+
             let patientPhotoUrl = '';
-  
+
             if (!patientSnapshot.empty) {
-              const patientDoc = patientSnapshot.docs[0];  // Suponiendo que solo hay un documento por cada ID
+              const patientDoc = patientSnapshot.docs[0];
               const patientData = patientDoc.data();
               const photoPath = patientData.fotoPerfil;
-  
+
               if (photoPath) {
                 const storage = getStorage();
                 const photoRef = ref(storage, photoPath);
-  
+
                 try {
                   patientPhotoUrl = await getDownloadURL(photoRef);
                 } catch (error) {
@@ -80,14 +79,13 @@ const ManageAppointments = () => {
                 appointmentDate: appointment.appointmentDate instanceof Timestamp
                   ? appointment.appointmentDate.toDate()
                   : parseISO(appointment.appointmentDate),
-                patientPhotoUrl: '',  // Dejar la URL de la foto vacía si no se encuentra el paciente
-                patientName: 'Paciente desconocido'  // También puedes agregar un nombre por defecto
+                patientPhotoUrl: '',
+                patientName: 'Paciente desconocido'
               };
             }
-  
-            // Manejo de la fecha
+
             let appointmentDate = appointment.appointmentDate;
-  
+
             if (appointmentDate instanceof Timestamp) {
               appointmentDate = appointmentDate.toDate();
             } else if (typeof appointmentDate === 'string') {
@@ -96,7 +94,7 @@ const ManageAppointments = () => {
               console.error('El campo appointmentDate no es del tipo esperado');
               return null;
             }
-  
+
             return {
               id: appointmentDoc.id,
               ...appointment,
@@ -105,17 +103,17 @@ const ManageAppointments = () => {
             };
           })
         );
-  
+
         setAppointments(appointmentsData.filter((app) => app !== null));
       },
       (error) => {
         console.error('Error al obtener los documentos de las citas:', error);
       }
     );
-  
+
     return () => unsubscribe();
   }, []);
-  
+
   useEffect(() => {
     const servicesRef = collection(db, 'serviceAppointment');
     const unsubscribe = onSnapshot(servicesRef, (snapshot) => {
