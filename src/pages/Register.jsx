@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+
 import { auth, db, storage } from '../firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { v4 as uuidv4 } from 'uuid';
+
 import { showToastSuccess, showToastError } from '../toastConfig';
-import Select from 'react-select';
+import { v4 as uuidv4 } from 'uuid';
+
 import '../styles/Pages/Register.css';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -88,6 +92,7 @@ const Register = () => {
   }));
 
   const navigate = useNavigate();
+  // Hook para redirigir programáticamente a una nueva ruta.
 
   useEffect(() => {
     const fetchNacionalidades = async () => {
@@ -256,6 +261,7 @@ const Register = () => {
       setNacionalidades(listaNacionalidades);
       setLoadingNacionalidades(false);
     };
+    // Lista de nacionalidades estática usada para cargar las opciones en el formulario.
 
     const fetchMedicalCenters = async () => {
       try {
@@ -269,6 +275,8 @@ const Register = () => {
         console.error("Error fetching medical centers: ", error);
       }
     };
+    // Funciones para obtener las nacionalidades, centros médicos y especialidades desde la base de datos.
+
 
     const fetchSpecialties = async () => {
       try {
@@ -287,6 +295,7 @@ const Register = () => {
     fetchMedicalCenters();
     fetchSpecialties();
   }, []);
+  // useEffect para realizar la carga inicial de datos.
 
   const comunidadesAutonomasOptions = [
     { value: 'Andalucía', label: 'Andalucía' },
@@ -309,11 +318,13 @@ const Register = () => {
     { value: 'País Vasco', label: 'País Vasco' },
     { value: 'Valencia', label: 'Valencia' }
   ];
+  // Opciones de comunidades autónomas para un select en el formulario.
 
   const fetchProvincias = async (community) => {
     let provincias = [];
 
     switch (community) {
+      // Opciones de provincias basadas en la comunidad autónoma seleccionada.
       case 'Andalucía':
             provincias = ['Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla'];
             break;
@@ -383,30 +394,38 @@ const Register = () => {
 
     setProvinciasOptions(provinciasOptions);
   };
+  // Función que actualiza las provincias basadas en la comunidad seleccionada.
 
   const handleCommunityChange = (selectedOption) => {
     setSelectedCommunity(selectedOption.value);
     fetchProvincias(selectedOption.value);
   };
+  // Manejador para cuando cambia la comunidad autónoma seleccionada.
 
   const handleProvinciaChange = (selectedOption) => {
     setSelectedProvincia(selectedOption.value);
   };
+  // Manejador para cuando cambia la provincia seleccionada.
 
   const handleMedicalCenterChange = (selectedOption) => {
     setDoctorData({ ...doctorData, centromedico: selectedOption.value });
   };
+  // Manejador para cuando cambia el centro médico seleccionado.
 
   const handleSpecialtyChange = (selectedOption) => {
     setDoctorData({ ...doctorData, especialidad: selectedOption.value });
   };
+  // Manejador para cuando cambia la especialidad seleccionada.
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Previene la recarga de la página al enviar el formulario.
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      // Registra un nuevo usuario con correo electrónico y contraseña.
 
       let fotoPerfilURL = '';
       if (fotoPerfil) {
@@ -414,6 +433,7 @@ const Register = () => {
         await uploadBytes(storageRef, fotoPerfil);
         fotoPerfilURL = await getDownloadURL(storageRef);
       }
+      // Si el usuario ha subido una foto de perfil, se sube a Firebase Storage y se obtiene la URL.
 
       const collectionName = userType === 'patient' ? 'patients' : 'doctors';
       const userData = {
@@ -427,6 +447,7 @@ const Register = () => {
         fecha_modificacion: new Date(),
         fotoPerfil: fotoPerfilURL,
       };
+      // Se define la estructura del documento que se almacenará en Firestore, diferenciando entre paciente o doctor.
 
       if (userType === 'patient') {
         userData.nombreCompleto = patientData.nombreCompleto;
@@ -459,10 +480,13 @@ const Register = () => {
         userData.centromedico = doctorData.centromedico;
         userData.numeroLicenciaMedica = doctorData.numeroLicenciaMedica;
       }
+      // Si el usuario es paciente o doctor, se rellenan los datos adicionales específicos de cada tipo.
 
       await setDoc(doc(db, collectionName, user.uid), userData);
+      // Guarda los datos del usuario en la base de datos (Firestore) en la colección correspondiente.
 
       navigate('/login');
+      // Redirige al usuario a la página de inicio de sesión después del registro.
       showToastSuccess('Se ha registrado exitosamente')
     } catch (error) {
       console.error('Error al registrar el usuario:', error);
