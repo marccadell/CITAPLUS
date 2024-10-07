@@ -14,6 +14,7 @@ import '../styles/Pages/Register.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
